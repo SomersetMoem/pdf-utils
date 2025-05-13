@@ -40,7 +40,79 @@ public class PdfTextExtractor {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getTextByPages() {
-        pdf.
+    public String getTextByPages(int page) {
+        PDFTextStripper stripper = new PDFTextStripper();
+        stripper.setStartPage(page);
+        stripper.setEndPage(page);
+        try {
+            return stripper.getText(pdf);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    /**
+     * Получить текст с нескольких страниц (включительно).
+     */
+    public String getTextByPages(int startPage, int endPage);
+
+    /**
+     * Получить количество страниц в PDF-документе.
+     */
+    public int getPageCount();
+
+    /**
+     * Получить текст с указанной страницы, построчно.
+     */
+    public List<String> getLinesByPage(int page);
+
+    /**
+     * Получить текст со всех страниц, построчно.
+     */
+    public List<String> getAllLines();
+
+    /**
+     * Получить текст в виде Map<Номер страницы, Текст этой страницы>.
+     */
+    public Map<Integer, String> getTextByAllPages();
+
+    /**
+     * Получить список всех слов в документе.
+     */
+    public List<String> getWords();
+
+    /**
+     * Получить все абзацы (если разделение возможно по структуре документа).
+     */
+    public List<String> getParagraphs();
+
+    /**
+     * Поиск и извлечение всех предложений, содержащих заданную строку.
+     */
+    public List<String> findSentencesContaining(String text);
+
+    /**
+     * Проверка наличия текста в документе (удобно для assert'ов в тестах).
+     */
+    public boolean containsText(String text);
+
+    /**
+     * Получить текст по регулярному выражению (например, все email'ы).
+     */
+    public List<String> getTextByRegex(String regex);
+
+    /**
+     * Получить текст только с чётных/нечётных страниц.
+     */
+    public String getTextFromEvenPages();
+
+    /**
+     * Удалить спецсимволы (например, невидимые символы, табы и прочее).
+     */
+    public String getCleanedText();
+
+    /**
+     * Получить оригинальный PDDocument, если нужно использовать напрямую.
+     */
+    public PDDocument getRawDocument();
 }
