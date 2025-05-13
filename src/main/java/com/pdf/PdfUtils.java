@@ -1,19 +1,19 @@
 package com.pdf;
 
-import com.codeborne.pdftest.PDF;
-import com.pdf.exception.PdfException;
-import com.pdf.extractors.PdfTextExtractor;
+import com.pdf.exceptions.PdfException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
-public final class PdfUtils {
-    private final PDF document;
+public final class PdfUtils implements AutoCloseable {
+    private final PDDocument document;
 
-    private PdfUtils(PDF document) {
+    private PdfUtils(PDDocument document) {
         this.document = document;
     }
 
@@ -25,16 +25,43 @@ public final class PdfUtils {
      * @throws PdfException если не удалось создать PDF из файла.
      */
     public static @NotNull PdfUtils fromFile(@NotNull File file) {
-        try {
-            PDF pdf = new PDF(file);
-            return new PdfUtils(pdf);
-        } catch (FileNotFoundException e) {
-            throw new PdfException("Файл не найден: " + file.getName(), e);
-        } catch (IOException e) {
-            throw new PdfException("Ошибка при чтении файла: " + file.getName(), e);
-        } catch (Exception e) {
-            throw new PdfException("Не удалось создать PDF из файла: " + file.getName(), e);
+        if (!file.exists()) {
+            throw new PdfException("Файл не найден: " + file.getAbsolutePath(), new IOException());
         }
+
+        if (!file.canRead()) {
+            throw new PdfException("Нет доступа к файлу: " + file.getAbsolutePath(), new SecurityException());
+        }
+
+        try {
+            PDDocument document = Loader.loadPDF(file);
+            return new PdfUtils(document);
+        } catch (IOException e) {
+            throw new PdfException("Ошибка при чтении файла: " + file.getAbsolutePath(), e);
+        }
+    }
+
+
+    /**
+     * Создаёт экземпляр PdfUtils из пути к файлу.
+     *
+     * @param path Путь к файлу PDF.
+     * @return PdfUtils экземпляр.
+     * @throws PdfException если не удалось создать PDF из файла.
+     */
+    public static @NotNull PdfUtils fromPath(@NotNull Path path) {
+        return fromFile(path.toFile());
+    }
+
+    /**
+     * Создаёт экземпляр PdfUtils из пути к файлу.
+     *
+     * @param path Путь к файлу PDF.
+     * @return PdfUtils экземпляр.
+     * @throws PdfException если не удалось создать PDF из файла.
+     */
+    public static @NotNull PdfUtils fromPath(@NotNull String path) {
+        return fromFile(new File(path));
     }
 
     /**
@@ -44,23 +71,40 @@ public final class PdfUtils {
      * @return PdfUtils экземпляр.
      * @throws PdfException если не удалось создать PDF из потока.
      */
-    public static @NotNull PdfUtils fromInputStream(@NotNull InputStream inputStream) {
+    public static PdfUtils fromInputStream(InputStream inputStream) {
         try {
-            PDF pdf = new PDF(inputStream);
-            return new PdfUtils(pdf);
+            PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
+            return new PdfUtils(document);
         } catch (IOException e) {
             throw new PdfException("Ошибка при чтении из потока", e);
-        } catch (Exception e) {
-            throw new PdfException("Не удалось создать PDF из потока", e);
+        }
+    }
+
+
+    /**
+     * Создаёт экземпляр PdfUtils из массива байтов.
+     *
+     * @param bytes Массив байтов PDF.
+     * @return PdfUtils экземпляр.
+     * @throws PdfException если не удалось создать PDF из массива байтов.
+     */
+    public static PdfUtils fromBytes(byte[] bytes) {
+        try {
+            PDDocument document = Loader.loadPDF(bytes);
+            return new PdfUtils(document);
+        } catch (IOException e) {
+            throw new PdfException("Ошибка при чтении из массива байтов", e);
         }
     }
 
     /**
-     * Получить текстовый экстрактор для работы с PDF.
+     * Закрыть документ и освободить ресурсы.
+     * Этот метод должен быть вызван после завершения работы с PDF.
      *
-     * @return Экстрактор текста.
+     * @throws IOException если произошла ошибка при закрытии документа.
      */
-    public PdfTextExtractor getTextExtractor() {
-        return new PdfTextExtractor(document);
+    @Override
+    public void close() throws IOException {
+        document.close();
     }
 }
