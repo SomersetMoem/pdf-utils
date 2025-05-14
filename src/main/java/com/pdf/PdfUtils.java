@@ -71,7 +71,7 @@ public final class PdfUtils implements AutoCloseable {
      * @return PdfUtils экземпляр.
      * @throws PdfException если не удалось создать PDF из потока.
      */
-    public static PdfUtils fromInputStream(InputStream inputStream) {
+    public static @NotNull PdfUtils fromInputStream(@NotNull InputStream inputStream) {
         try {
             PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
             return new PdfUtils(document);
@@ -88,7 +88,7 @@ public final class PdfUtils implements AutoCloseable {
      * @return PdfUtils экземпляр.
      * @throws PdfException если не удалось создать PDF из массива байтов.
      */
-    public static PdfUtils fromBytes(byte[] bytes) {
+    public static @NotNull PdfUtils fromBytes(byte[] bytes) {
         try {
             PDDocument document = Loader.loadPDF(bytes);
             return new PdfUtils(document);
