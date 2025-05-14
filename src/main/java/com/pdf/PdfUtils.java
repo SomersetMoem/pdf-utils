@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.List;
 
 public final class PdfUtils implements AutoCloseable {
     private final PDDocument document;
@@ -94,7 +93,7 @@ public final class PdfUtils implements AutoCloseable {
      * @return PdfUtils экземпляр.
      * @throws PdfException если не удалось создать PDF из массива байтов.
      */
-    public static @NotNull PdfUtils fromBytes(byte[] bytes) {
+    public static @NotNull PdfUtils fromBytes(byte @NotNull [] bytes) {
         try {
             PDDocument document = Loader.loadPDF(bytes);
             return new PdfUtils(document);
