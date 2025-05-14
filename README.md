@@ -18,13 +18,6 @@
 ```
 File file = new File("example.pdf");
 PdfUtils pdfUtils = PdfUtils.fromFile(file);
-
-// Извлечение текста
 String text = pdfUtils.getTextExtractor().getAllText();
-List<String> parts = pdfUtils.getTextExtractor().getSplitPdfText("Chapter");
-
-// Извлечение метаданных
-PdfMetaDataExtractor meta = new PdfMetaDataExtractor(pdfUtils.getDocument());
-String title = meta.getTitle();
-boolean encrypted = meta.isEncrypted();
+String parts = pdfUtils.getMetaDataExtractor().getTitle();
 ```
