@@ -1,6 +1,8 @@
 package com.pdf;
 
 import com.pdf.exceptions.PdfException;
+import com.pdf.extractors.PdfMetaDataExtractor;
+import com.pdf.extractors.PdfTextExtractor;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jetbrains.annotations.NotNull;
@@ -9,12 +11,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 
 public final class PdfUtils implements AutoCloseable {
     private final PDDocument document;
+    private final PdfTextExtractor textExtractor;
+    private final PdfMetaDataExtractor pdfMetaDataExtractor;
 
     private PdfUtils(PDDocument document) {
         this.document = document;
+        this.textExtractor = new PdfTextExtractor(document);
+        this.pdfMetaDataExtractor = new PdfMetaDataExtractor(document);
     }
 
     /**
@@ -40,7 +47,6 @@ public final class PdfUtils implements AutoCloseable {
             throw new PdfException("Ошибка при чтении файла: " + file.getAbsolutePath(), e);
         }
     }
-
 
     /**
      * Создаёт экземпляр PdfUtils из пути к файлу.
@@ -110,5 +116,13 @@ public final class PdfUtils implements AutoCloseable {
 
     public PDDocument getDocument() {
         return document;
+    }
+
+    public PdfTextExtractor getTextExtractor() {
+        return textExtractor;
+    }
+
+    public PdfMetaDataExtractor getMetaDataExtractor() {
+        return pdfMetaDataExtractor;
     }
 }
