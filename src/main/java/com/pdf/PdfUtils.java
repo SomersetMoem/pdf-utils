@@ -107,4 +107,8 @@ public final class PdfUtils implements AutoCloseable {
     public void close() throws IOException {
         document.close();
     }
+
+    public PDDocument getDocument() {
+        return document;
+    }
 }
