@@ -12,9 +12,10 @@
     <artifactId>pdf-utils</artifactId>
     <version>1.0</version>
 </dependency>
+```
 
 🚀 Быстрый старт
-
+```
 File file = new File("example.pdf");
 PdfUtils pdfUtils = PdfUtils.fromFile(file);
 
@@ -26,3 +27,4 @@ List<String> parts = pdfUtils.getTextExtractor().getSplitPdfText("Chapter");
 PdfMetaDataExtractor meta = new PdfMetaDataExtractor(pdfUtils.getDocument());
 String title = meta.getTitle();
 boolean encrypted = meta.isEncrypted();
+```
