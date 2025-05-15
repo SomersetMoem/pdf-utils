@@ -14,10 +14,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Утилита для извлечения текста из PDF-документа.
+ * Класс для извлечения текста из PDF-документа.
  */
-public class PdfTextExtractor {
-    private final PDDocument pdf;
+public class PdfTextExtractor extends BaseExtractor {
     private final String allText;
 
     /**
@@ -27,7 +26,7 @@ public class PdfTextExtractor {
      * @throws PdfException если возникла ошибка при извлечении текста
      */
     public PdfTextExtractor(@NotNull PDDocument pdf) {
-        this.pdf = pdf;
+        super(pdf);
         try {
             PDFTextStripper pdfTextStripper = new PDFTextStripper();
             allText = pdfTextStripper.getText(pdf);
@@ -83,7 +82,7 @@ public class PdfTextExtractor {
         stripper.setStartPage(page);
         stripper.setEndPage(page);
         try {
-            return stripper.getText(pdf);
+            return stripper.getText(document);
         } catch (IOException e) {
             throw new PdfException("Ошибка при извлечении текста со страницы " + page, e);
         }
@@ -104,19 +103,10 @@ public class PdfTextExtractor {
         stripper.setStartPage(startPage);
         stripper.setEndPage(endPage);
         try {
-            return stripper.getText(pdf);
+            return stripper.getText(document);
         } catch (IOException e) {
             throw new PdfException("Ошибка при извлечении текста со страниц " + startPage + "-" + endPage, e);
         }
-    }
-
-    /**
-     * Получить количество страниц в PDF-документе
-     *
-     * @return количество страниц
-     */
-    public int getPageCount() {
-        return pdf.getNumberOfPages();
     }
 
     /**
@@ -133,7 +123,7 @@ public class PdfTextExtractor {
             for (int i = 1; i <= pageCount; i++) {
                 stripper.setStartPage(i);
                 stripper.setEndPage(i);
-                pageTextMap.put(i, stripper.getText(pdf));
+                pageTextMap.put(i, stripper.getText(document));
             }
         } catch (IOException e) {
             throw new PdfException("Ошибка при извлечении текста со всех страниц", e);
@@ -198,45 +188,5 @@ public class PdfTextExtractor {
         validatePageNumber(pageNumber);
         String pageText = getTextByPages(pageNumber);
         return pattern.matcher(pageText).find();
-    }
-
-    /**
-     * Проверяет корректность номера страницы
-     *
-     * @param pageNumber номер страницы для проверки
-     * @throws PdfException если номер страницы некорректный
-     */
-    private void validatePageNumber(int pageNumber) {
-        int pageCount = getPageCount();
-        if (pageNumber < 1 || pageNumber > pageCount) {
-            throw new PdfException(
-                    String.format("Некорректный номер страницы: %d. Документ содержит %d страниц",
-                            pageNumber, pageCount), new IOException());
-        }
-    }
-
-    /**
-     * Проверяет корректность диапазона страниц
-     *
-     * @param startPage начальная страница
-     * @param endPage   конечная страница
-     * @throws PdfException если диапазон страниц некорректный
-     */
-    private void validatePageRange(int startPage, int endPage) {
-        int pageCount = getPageCount();
-        if (startPage < 1 || startPage > pageCount) {
-            throw new PdfException(
-                    String.format("Некорректный номер начальной страницы: %d. Документ содержит %d страниц",
-                            startPage, pageCount), new IOException());
-        }
-        if (endPage < 1 || endPage > pageCount) {
-            throw new PdfException(
-                    String.format("Некорректный номер конечной страницы: %d. Документ содержит %d страниц",
-                            endPage, pageCount), new IOException());
-        }
-        if (startPage > endPage) {
-            throw new PdfException(
-                    String.format("Некорректный диапазон страниц: от %d до %d", startPage, endPage), new IOException());
-        }
     }
 }

@@ -12,76 +12,75 @@ import java.util.stream.Collectors;
 import static com.pdf.utils.DateUtils.formatCalendarDate;
 
 /**
- * Утилита для извлечения метаданных из PDF-документа.
+ * Класс для извлечения метаданных из PDF-документа.
  */
-public class PdfMetaDataExtractor {
-    private final PDDocument pdf;
+public class PdfMetaDataExtractor extends BaseExtractor {
 
-    public PdfMetaDataExtractor(PDDocument pdf) {
-        this.pdf = pdf;
+    public PdfMetaDataExtractor(PDDocument document) {
+        super(document);
     }
 
     /**
      * @return Заголовок документа, если указан
      */
     public String getTitle() {
-        return pdf.getDocumentInformation().getTitle();
+        return document.getDocumentInformation().getTitle();
     }
 
     /**
      * @return Автор документа
      */
     public String getAuthor() {
-        return pdf.getDocumentInformation().getAuthor();
+        return document.getDocumentInformation().getAuthor();
     }
 
     /**
      * @return Тема документа
      */
     public String getSubject() {
-        return pdf.getDocumentInformation().getSubject();
+        return document.getDocumentInformation().getSubject();
     }
 
     /**
      * @return Ключевые слова документа
      */
     public String getKeywords() {
-        return pdf.getDocumentInformation().getKeywords();
+        return document.getDocumentInformation().getKeywords();
     }
 
     /**
      * @return Программа/система, сгенерировавшая PDF
      */
     public String getCreator() {
-        return pdf.getDocumentInformation().getCreator();
+        return document.getDocumentInformation().getCreator();
     }
 
     /**
      * @return Программа, использованная для генерации PDF
      */
     public String getProducer() {
-        return pdf.getDocumentInformation().getProducer();
+        return document.getDocumentInformation().getProducer();
     }
 
     /**
      * @return Дата создания документа (форматированная)
      */
     public String getCreationDate() {
-        return formatCalendarDate(pdf.getDocumentInformation().getCreationDate());
+        return formatCalendarDate(document.getDocumentInformation().getCreationDate());
     }
 
     /**
      * @return Дата последнего изменения документа (форматированная)
      */
     public String getModificationDate() {
-        return formatCalendarDate(pdf.getDocumentInformation().getModificationDate());
+        return formatCalendarDate(document.getDocumentInformation().getModificationDate());
     }
 
     /**
      * @return Все доступные метаданные в виде Map
      */
     public Map<String, String> getAllMetadata() {
-        return pdf.getDocumentInformation().getCOSObject().entrySet().stream()
+        return document.getDocumentInformation().getCOSObject().entrySet().stream()
                 .filter(e -> e.getKey() != null && e.getValue() != null)
                 .collect(Collectors.toMap(
                         e -> e.getKey().getName(),
@@ -98,7 +97,7 @@ public class PdfMetaDataExtractor {
      * @return true, если значение присутствует
      */
     public boolean hasMetadata(String key) {
-        return pdf.getDocumentInformation().getCOSObject().containsKey(COSName.getPDFName(key));
+        return document.getDocumentInformation().getCOSObject().containsKey(COSName.getPDFName(key));
     }
 
     /**
@@ -108,7 +107,7 @@ public class PdfMetaDataExtractor {
      * @return значение или null
      */
     public String getCustomMetadata(String key) {
-        return Optional.ofNullable(pdf.getDocumentInformation().getCOSObject().getDictionaryObject(COSName.getPDFName(key)))
+        return Optional.ofNullable(document.getDocumentInformation().getCOSObject().getDictionaryObject(COSName.getPDFName(key)))
                 .map(Object::toString)
                 .orElse(null);
     }
@@ -117,15 +116,15 @@ public class PdfMetaDataExtractor {
      * @return true, если документ зашифрован
      */
     public boolean isEncrypted() {
-        return pdf.isEncrypted();
+        return document.isEncrypted();
     }
 
     /**
      * @return true, если документ защищён паролем (ограничения на чтение)
      */
     public boolean isPasswordProtected() {
-        if (!pdf.isEncrypted()) return false;
-        AccessPermission permission = pdf.getCurrentAccessPermission();
+        if (!document.isEncrypted()) return false;
+        AccessPermission permission = document.getCurrentAccessPermission();
         return !permission.canExtractContent();
     }
 
@@ -133,6 +132,6 @@ public class PdfMetaDataExtractor {
      * @return Объект с разрешениями доступа (печать, копирование и т.п.)
      */
     public AccessPermission getAccessPermissions() {
-        return pdf.getCurrentAccessPermission();
+        return document.getCurrentAccessPermission();
     }
 }

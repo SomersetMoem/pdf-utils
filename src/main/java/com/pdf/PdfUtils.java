@@ -1,8 +1,10 @@
 package com.pdf;
 
 import com.pdf.exceptions.PdfException;
+import com.pdf.extractors.PdfImageExtractor;
 import com.pdf.extractors.PdfMetaDataExtractor;
 import com.pdf.extractors.PdfTextExtractor;
+import lombok.Getter;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jetbrains.annotations.NotNull;
@@ -12,15 +14,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+@Getter
 public final class PdfUtils implements AutoCloseable {
     private final PDDocument document;
     private final PdfTextExtractor textExtractor;
     private final PdfMetaDataExtractor pdfMetaDataExtractor;
+    private final PdfImageExtractor pdfImageExtractor;
 
     private PdfUtils(PDDocument document) {
         this.document = document;
         this.textExtractor = new PdfTextExtractor(document);
         this.pdfMetaDataExtractor = new PdfMetaDataExtractor(document);
+        this.pdfImageExtractor = new PdfImageExtractor(document);
     }
 
     /**
@@ -111,17 +116,5 @@ public final class PdfUtils implements AutoCloseable {
     @Override
     public void close() throws IOException {
         document.close();
-    }
-
-    public PDDocument getDocument() {
-        return document;
-    }
-
-    public PdfTextExtractor getTextExtractor() {
-        return textExtractor;
-    }
-
-    public PdfMetaDataExtractor getMetaDataExtractor() {
-        return pdfMetaDataExtractor;
     }
 }
