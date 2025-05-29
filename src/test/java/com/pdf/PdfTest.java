@@ -1,6 +1,5 @@
-package com.example;
+package com.pdf;
 
-import com.pdf.PdfUtils;
 import com.pdf.extractors.PdfTextExtractor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
