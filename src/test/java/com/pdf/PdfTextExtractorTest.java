@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class PdfTextExtractorTest {
     private final static String PDF_PATH = "src/test/resources/test.data/testPdf.pdf";
     private PdfTextExtractor textExtractor;
@@ -31,4 +33,12 @@ public class PdfTextExtractorTest {
         Assertions.assertFalse(allTestPrepared.contains("\r\nЭту книгу хорошо дополняют:\r\n"));
         Assertions.assertTrue(allTestPrepared.contains("Эту книгу хорошо дополняют:"));
     }
+
+    @Test
+    public void getSplitPdfTextTest() {
+        List<String> texts = textExtractor.getSplitPdfText("Эту книгу хорошо дополняют:");
+        Assertions.assertEquals(2, texts.size());
+    }
+
+
 }
