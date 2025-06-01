@@ -1,9 +1,12 @@
 package com.pdf;
 
 import com.pdf.extractors.PdfMetaDataExtractor;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class PdfMetaDataExtractorTest {
     private final static String PDF_PATH = "src/test/resources/test.data/testPdf.pdf";
@@ -50,5 +53,48 @@ public class PdfMetaDataExtractorTest {
     public void getProducerTest() {
         String producer = metaDataExtractor.getProducer();
         Assertions.assertEquals("Acrobat Distiller 19.0 (Windows)", producer);
+    }
+
+    @Test
+    public void getCreationDateTest() {
+        String date = metaDataExtractor.getCreationDate();
+        Assertions.assertEquals("2019-04-11 09:08:10", date);
+    }
+
+    @Test
+    public void getModificationDateTest() {
+        String date = metaDataExtractor.getModificationDate();
+        Assertions.assertEquals("2019-05-28 17:24:43", date);
+    }
+
+    @Test
+    public void getAllMetadataTest() {
+        Map<String, String> allMetadata = metaDataExtractor.getAllMetadata();
+        String author = allMetadata.get("Author");
+        Assertions.assertEquals("Пол Доэрти", author);
+    }
+
+    @Test
+    public void hasMetadataTest() {
+        boolean hasMD = metaDataExtractor.hasMetadata("Author");
+        Assertions.assertTrue(hasMD);
+    }
+
+    @Test
+    public void isEncryptedTest() {
+        boolean isEncrypt = metaDataExtractor.isEncrypted();
+        Assertions.assertTrue(isEncrypt);
+    }
+
+    @Test
+    public void isPasswordProtectedTest() {
+        boolean isPassword = metaDataExtractor.isPasswordProtected();
+        Assertions.assertFalse(isPassword);
+    }
+
+    @Test
+    public void getAccessPermissionsTest() {
+        AccessPermission accessPermissions = metaDataExtractor.getAccessPermissions();
+        Assertions.assertTrue(accessPermissions.isReadOnly());
     }
 }

@@ -1,6 +1,7 @@
 package com.pdf.extractors;
 
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 
@@ -81,10 +82,10 @@ public class PdfMetaDataExtractor extends BaseExtractor {
      */
     public Map<String, String> getAllMetadata() {
         return document.getDocumentInformation().getCOSObject().entrySet().stream()
-                .filter(e -> e.getKey() != null && e.getValue() != null)
+                .filter(e -> e.getKey() != null && e.getValue() instanceof COSString)
                 .collect(Collectors.toMap(
                         e -> e.getKey().getName(),
-                        e -> e.getValue().toString(),
+                        e -> ((COSString) e.getValue()).getString(),
                         (a, b) -> b,
                         LinkedHashMap::new
                 ));
