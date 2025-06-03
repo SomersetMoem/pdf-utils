@@ -90,11 +90,19 @@ public class PdfImageExtractor extends BaseExtractor {
      * Сохранить все изображения в указанную директорию.
      * Названия файлов будут иметь вид page_X_image_Y.png
      *
-     * @param outputDir директория, куда сохраняются изображения
+     * @param outputDir директория, куда сохраняются изображения (полный путь)
      * @throws PdfException если не удалось сохранить изображение
      */
     public void saveAllImagesToDirectory(File outputDir) {
         Map<Integer, List<BufferedImage>> imagesByPages = extractImagesByPages();
+
+        if (!outputDir.isDirectory()) {
+            boolean created = outputDir.mkdirs();
+            if (!created) {
+                throw new PdfException("Не удалось создать директорию: " + outputDir.getAbsolutePath());
+            }
+        }
+
         for (Map.Entry<Integer, List<BufferedImage>> entry : imagesByPages.entrySet()) {
             int page = entry.getKey();
             List<BufferedImage> images = entry.getValue();

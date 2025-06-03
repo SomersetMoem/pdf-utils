@@ -3,8 +3,6 @@ package com.pdf.extractors;
 import com.pdf.exceptions.PdfException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import java.io.IOException;
-
 public class BaseExtractor {
     protected final PDDocument document;
 
@@ -20,7 +18,7 @@ public class BaseExtractor {
      */
     protected void validatePageNumber(int pageNumber) {
         int pageCount = getPageCount();
-        if (pageNumber < 1 || pageNumber > pageCount) {
+        if (pageNumber < 0 || pageNumber > pageCount) {
             throw new PdfException(
                     String.format("Некорректный номер страницы: %d. Документ содержит %d страниц",
                             pageNumber, pageCount));
