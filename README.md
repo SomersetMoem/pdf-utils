@@ -49,8 +49,8 @@
 ### Извлечение текста
 
 ```java
-PDDocument document = PDDocument.load(new File("sample.pdf"));
-PdfTextExtractor extractor = new PdfTextExtractor(document);
+PdfUtils pdfUtils = PdfUtils.fromPath(PDF_PATH);
+PdfTextExtractor extractor = new PdfTextExtractor(pdfUtils.getDocument());
 
 String text = extractor.getAllText();
 String firstPageText = extractor.getTextByPages(1);
@@ -59,8 +59,8 @@ String firstPageText = extractor.getTextByPages(1);
 ### Извлечение изображений
 
 ```java
-PDDocument document = PDDocument.load(new File("sample.pdf"));
-PdfImageExtractor extractor = new PdfImageExtractor(document);
+PdfUtils pdfUtils = PdfUtils.fromPath(PDF_PATH);
+PdfImageExtractor extractor = new PdfImageExtractor(pdfUtils.getDocument());
 
 List<BufferedImage> images = extractor.extractAllImages();
 extractor.saveAllImagesToDirectory(new File("output/images"));
@@ -69,8 +69,8 @@ extractor.saveAllImagesToDirectory(new File("output/images"));
 ### Получение метаданных
 
 ```java
-PDDocument document = PDDocument.load(new File("sample.pdf"));
-PdfMetaDataExtractor extractor = new PdfMetaDataExtractor(document);
+PdfUtils pdfUtils = PdfUtils.fromPath(PDF_PATH);
+PdfMetaDataExtractor extractor = new PdfMetaDataExtractor(pdfUtils.getDocument());
 
 String title = extractor.getTitle();
 Map<String, String> allMeta = extractor.getAllMetadata();
