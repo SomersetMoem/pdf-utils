@@ -23,8 +23,9 @@
 
 Пока библиотека не размещена в центральном репозитории Maven, её можно подключить напрямую из GitHub с помощью JitPack:
 
-### 1. Добавьте JitPack в `pom.xml`
+### Maven
 
+#### 1. Добавьте JitPack в `pom.xml`
 ```xml
 <repositories>
     <repository>
@@ -34,14 +35,42 @@
 </repositories>
 ```
 
-### 2. Добавьте зависимость
-
+#### 2. Добавьте зависимость
 ```xml
 <dependency>
     <groupId>com.github.SomersetMoem</groupId>
     <artifactId>pdf-utils</artifactId>
     <version>1.0.0</version>
 </dependency>
+```
+
+### Gradle
+
+#### 1. Добавьте JitPack в `build.gradle`
+```gradle
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+```
+
+#### 2. Добавьте зависимость
+```gradle
+dependencies {
+    implementation 'com.github.SomersetMoem:pdf-utils:1.0.0'
+}
+```
+
+#### Для Gradle Kotlin DSL (`build.gradle.kts`)
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.SomersetMoem:pdf-utils:1.0.0")
+}
 ```
 
 ## 📘 Примеры использования
